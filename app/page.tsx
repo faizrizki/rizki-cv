@@ -49,7 +49,7 @@ export default async function HomePage() {
 
       <main className="gradient-bg">
         {!connected && (
-          <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-5 py-3 text-center text-sm text-amber-200 backdrop-blur">
+          <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-xl border border-amber-500/30 bg-amber-950/95 px-5 py-3 text-center text-sm text-amber-200">
             Supabase belum terhubung. Jalankan <code className="font-mono">supabase/schema.sql</code> dan
             isi <code className="font-mono">.env.local</code>.
           </div>

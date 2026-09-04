@@ -23,7 +23,7 @@ export default function AdminNav({ unread }: { unread: number }) {
   return (
     <header
       className="sticky top-0 z-50 border-b border-white/5"
-      style={{ background: 'rgba(2,6,23,0.85)', backdropFilter: 'blur(20px)' }}
+      style={{ background: 'rgba(2,6,23,0.94)' }}
     >
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-6 py-4">
         <Link href="/admin" className="text-lg font-bold text-gradient">

@@ -1,5 +1,4 @@
 import { ArrowRight, Download } from 'lucide-react';
-import Particles from './Particles';
 import Typing from './Typing';
 import type { Profile } from '@/lib/types';
 
@@ -9,11 +8,11 @@ export default function Hero({ profile }: { profile: Profile }) {
       id="hero"
       className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pt-20"
     >
-      <div className="orb -left-[5%] top-[10%] h-[400px] w-[400px] bg-indigo-500/15" />
-      <div className="orb -right-[5%] top-[60%] h-[300px] w-[300px] bg-cyan-500/[0.12] [animation-delay:-7s]" />
-      <div className="orb bottom-[10%] left-[30%] h-[250px] w-[250px] bg-violet-500/10 [animation-delay:-14s]" />
-
-      <Particles />
+      {/* Latar: pola grid + dua orb gradient. Semuanya CSS, tidak ada canvas
+          atau loop animasi JavaScript yang jalan saat halaman di-scroll. */}
+      <div className="grid-backdrop" />
+      <div className="orb orb-indigo -left-[10%] top-[8%] h-[520px] w-[520px]" />
+      <div className="orb orb-cyan -right-[10%] top-[45%] h-[420px] w-[420px] [animation-delay:-12s]" />
 
       <div className="relative z-10 mx-auto max-w-5xl text-center">
         {profile.available_for_work && (
@@ -28,7 +27,7 @@ export default function Hero({ profile }: { profile: Profile }) {
         </p>
 
         <h1 className="mb-6 text-5xl font-black leading-none tracking-tight md:text-7xl lg:text-8xl">
-          <span className="text-gradient">{profile.role}</span>
+          <span className="text-gradient text-gradient-live">{profile.role}</span>
           <br />
           <span className="text-white">
             <Typing words={profile.typing_words} />

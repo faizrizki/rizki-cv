@@ -25,17 +25,37 @@ body {
       radial-gradient(ellipse 50% 50% at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
   }
 
+  /* Pola grid tipis sebagai pengganti canvas partikel: satu paint, tidak ada
+     pekerjaan per-frame sama sekali. */
+  .grid-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%);
+  }
+
   /* --- Kartu kaca ------------------------------------------------------- */
+  /* Tanpa backdrop-filter. Di atas latar gelap, rgba biasa nyaris tak
+     terbedakan dari blur, tapi tidak memaksa browser me-render ulang
+     area di belakang tiap kartu saat scroll. */
   .glass-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    transition:
+      border-color 0.3s ease,
+      background-color 0.3s ease,
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
   }
   .glass-card:hover {
     border-color: rgba(99, 102, 241, 0.4);
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.06);
     box-shadow: 0 0 30px rgba(99, 102, 241, 0.08);
     transform: translateY(-4px);
   }
@@ -51,6 +71,10 @@ body {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
+  }
+  /* Animasi background-position memaksa repaint terus-menerus, jadi dipakai
+     di satu elemen saja: judul hero. */
+  .text-gradient-live {
     animation: shimmer 4s ease-in-out infinite;
   }
   @keyframes shimmer {
@@ -64,13 +88,21 @@ body {
   }
 
   /* --- Orb mengapung di hero ------------------------------------------- */
+  /* Dulu: div + filter: blur(80px), mahal untuk di-render ulang.
+     Sekarang: radial-gradient yang sudah lembut dari sumbernya, dan hanya
+     transform yang dianimasikan sehingga ditangani compositor. */
   .orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.4;
-    animation: orbFloat 20s ease-in-out infinite;
     pointer-events: none;
+    will-change: transform;
+    animation: orbFloat 24s ease-in-out infinite;
+  }
+  .orb-indigo {
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.28) 0%, rgba(99, 102, 241, 0) 70%);
+  }
+  .orb-cyan {
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.22) 0%, rgba(6, 182, 212, 0) 70%);
   }
   @keyframes orbFloat {
     0%,
@@ -148,7 +180,7 @@ body {
     background: #020617;
     border: 2px solid #6366f1;
     z-index: 2;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
   }
   .timeline-item:hover .timeline-dot {
     background: #6366f1;
@@ -213,7 +245,7 @@ body {
   }
   .side-rail a {
     color: #64748b;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease, transform 0.3s ease;
   }
   .side-rail-left a:hover {
     color: #818cf8;
@@ -238,7 +270,7 @@ body {
   /* --- Filter tab project ---------------------------------------------- */
   .filter-tab {
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
   }
   .filter-tab[data-active='true'] {
     background: rgba(99, 102, 241, 0.2);
@@ -287,7 +319,7 @@ body {
     font-size: 0.875rem;
     font-weight: 600;
     color: #fff;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
   }
   .btn-primary:hover:not(:disabled) {
     background: #6366f1;
@@ -308,7 +340,7 @@ body {
     font-size: 0.875rem;
     font-weight: 600;
     color: #cbd5e1;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease, border-color 0.3s ease;
   }
   .btn-ghost:hover:not(:disabled) {
     border-color: rgba(255, 255, 255, 0.25);
@@ -326,7 +358,7 @@ body {
     font-size: 0.8125rem;
     font-weight: 600;
     color: #fda4af;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease, background-color 0.3s ease;
   }
   .btn-danger:hover:not(:disabled) {
     background: rgba(244, 63, 94, 0.2);

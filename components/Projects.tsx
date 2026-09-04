@@ -69,12 +69,12 @@ export default function Projects({ projects }: { projects: Project[] }) {
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
 
                   {project.category && (
-                    <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-indigo-600/90 px-3 py-1 text-xs text-white backdrop-blur-sm">
+                    <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-indigo-600/90 px-3 py-1 text-xs text-white">
                       {project.category}
                     </span>
                   )}
                   {project.featured && (
-                    <span className="pointer-events-none absolute left-4 top-4 rounded-full border border-amber-400/30 bg-amber-400/15 px-3 py-1 text-xs text-amber-300 backdrop-blur-sm">
+                    <span className="pointer-events-none absolute left-4 top-4 rounded-full border border-amber-400/30 bg-amber-400/15 px-3 py-1 text-xs text-amber-300">
                       Featured
                     </span>
                   )}

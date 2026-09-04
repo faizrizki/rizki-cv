@@ -17,22 +17,41 @@ export default function Nav({ initials }: { initials: string }) {
   const [active, setActive] = useState('');
 
   useEffect(() => {
-    const onScroll = () => {
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0);
+    // Elemen section dicari sekali, bukan tiap event scroll.
+    const sections = LINKS.map((link) => ({
+      href: link.href,
+      el: document.querySelector(link.href),
+    }));
 
-      // Section yang sedang dilihat = yang paling dekat dengan sepertiga atas layar.
+    let ticking = false;
+
+    const measure = () => {
+      ticking = false;
+
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      // Dibulatkan ke bilangan bulat: React hanya re-render kalau angkanya
+      // benar-benar berubah, bukan 60 kali per detik.
+      const next = scrollable > 0 ? Math.round((window.scrollY / scrollable) * 100) : 0;
+      setProgress((prev) => (prev === next ? prev : next));
+
+      const threshold = window.innerHeight * 0.35;
       let current = '';
-      for (const link of LINKS) {
-        const el = document.querySelector(link.href);
-        if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.35) {
-          current = link.href;
+      for (const section of sections) {
+        if (section.el && section.el.getBoundingClientRect().top <= threshold) {
+          current = section.href;
         }
       }
-      setActive(current);
+      setActive((prev) => (prev === current ? prev : current));
     };
 
-    onScroll();
+    // Satu pengukuran per frame, digabung lewat requestAnimationFrame.
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(measure);
+    };
+
+    measure();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -40,7 +59,7 @@ export default function Nav({ initials }: { initials: string }) {
   return (
     <nav
       className="fixed inset-x-0 top-0 z-50 border-b border-white/5"
-      style={{ background: 'rgba(2,6,23,0.8)', backdropFilter: 'blur(20px)' }}
+      style={{ background: 'rgba(2,6,23,0.94)' }}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <a href="#hero" className="text-xl font-bold text-gradient">
