@@ -59,7 +59,7 @@ git push
 
 1. Di [vercel.com](https://vercel.com) -> **Add New Project** -> import repo ini.
 2. Framework terdeteksi otomatis sebagai Next.js, biarkan setelannya default.
-3. Isi **Environment Variables** dengan 5 nilai dari `.env.example`.
+3. Isi **Environment Variables** dengan 6 nilai dari `.env.example` (`CRON_SECRET` boleh dikosongkan).
 4. **Deploy**. Push berikutnya ke `main` otomatis ter-deploy.
 
 ## 4. Cara pakai CMS
@@ -87,21 +87,66 @@ Efeknya foto 4 MB dari HP biasanya jadi ~80-120 KB. Gambar lama otomatis
 dihapus dari storage saat diganti atau saat project dihapus, jadi tidak ada
 file nyangkut yang memakan kuota.
 
-## 5. Catatan keamanan
+## 5. Keep-alive Supabase
+
+Project Supabase gratis di-pause kalau tidak menerima request selama beberapa
+hari. Supaya web tidak tiba-tiba mati saat dilihat recruiter, ada cron harian:
+
+- `vercel.json` mendaftarkan Vercel Cron ke `/api/keep-alive`, jalan tiap hari
+  pukul **03:00 UTC (10:00 WIB)**.
+- Endpoint-nya menembak satu query paling murah (`count` di tabel `profile`),
+  cukup untuk dihitung sebagai aktivitas.
+- Isi env `CRON_SECRET` dengan string acak (`openssl rand -hex 16`). Vercel
+  otomatis mengirimkannya sebagai header `Authorization: Bearer ...` saat cron
+  jalan, jadi endpoint-nya tidak bisa dipicu orang lain. Kalau dibiarkan
+  kosong, endpoint tetap jalan tapi terbuka untuk umum.
+
+Cek manual setelah deploy:
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" https://<domain>/api/keep-alive
+```
+
+Balasannya `{"ok":true,"pinged_at":...,"duration_ms":...}`. Riwayat jalannya
+bisa dilihat di Vercel → project → **Cron Jobs**.
+
+Catatan: Vercel Hobby membatasi cron jadi sekali sehari, dan itu sudah cukup.
+
+## 6. Kenapa web-nya ringan
+
+Beberapa keputusan sengaja diambil supaya scroll tetap mulus, terutama di HP:
+
+- **Tidak ada canvas partikel.** Versi awal menggambar titik + garis penghubung
+  tiap frame — 70 titik berarti 2.415 pengecekan pasangan per frame. Diganti pola
+  grid CSS dan dua orb radial-gradient: satu kali paint, nol kerja per-frame.
+- **Nol `backdrop-filter`.** Sebelumnya 25 kartu memakai `blur(12px)`, yang
+  memaksa browser me-render ulang area di belakang setiap kartu saat scroll.
+  Di atas latar gelap, `rgba()` biasa terlihat nyaris sama.
+- **Animasi hanya `transform` dan `opacity`**, dua properti yang ditangani
+  compositor tanpa memicu layout atau paint ulang.
+- **Shimmer teks gradient cuma di judul hero.** Animasi `background-position`
+  memicu repaint terus-menerus, jadi tidak dipakai di 10 tempat.
+- **Listener scroll di-throttle `requestAnimationFrame`**, elemen section
+  di-cache sekali, dan state hanya di-set kalau nilainya benar-benar berubah.
+- **`transition: all` dihapus** dan diganti daftar properti yang eksplisit.
+- Gambar di-`loading="lazy"` dan sudah dikompres jadi WebP di sisi browser.
+
+## 7. Catatan keamanan
 
 - `SUPABASE_SERVICE_ROLE_KEY` hanya dipakai di route handler (server). Tidak pernah dikirim ke browser.
 - RLS aktif di semua tabel; anon key hanya bisa membaca. Tabel `messages` tidak punya policy sama sekali, jadi tidak bisa dibaca publik.
 - Login admin: password tunggal ditukar cookie `httpOnly` yang ditandatangani HMAC-SHA256 (`AUTH_SECRET`), diperiksa di middleware dan di tiap route handler.
 
-## 6. Struktur
+## 8. Struktur
 
 ```
 app/
   page.tsx                  landing page (SSR dari Supabase, revalidate 60s)
   admin/login/              halaman login
   admin/(panel)/            CMS: projects, profile, messages
-  api/                      auth, projects, upload, profile, messages
+  api/                      auth, projects, upload, profile, messages, keep-alive
 components/                 section landing page + komponen admin
 lib/                        supabase client, auth, kompresi gambar, tipe data
 supabase/schema.sql         satu query: skema + RLS + storage + seed
+vercel.json                 jadwal cron keep-alive
 ```
