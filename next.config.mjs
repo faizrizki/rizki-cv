@@ -1,13 +1,16 @@
 /** @type {import('next').NextConfig} */
-const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
-  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
-  : null;
-
 const nextConfig = {
   images: {
-    remotePatterns: supabaseHost
-      ? [{ protocol: 'https', hostname: supabaseHost, pathname: '/storage/v1/object/public/**' }]
-      : [{ protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/v1/object/public/**' }],
+    // Thumbnail dari Supabase Storage. Sengaja pakai wildcard statis, bukan
+    // hasil parse env: nilai env yang salah format pernah bikin config ini
+    // throw dan build Vercel mati sebelum apa pun dikompilasi.
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
   },
 };
 
