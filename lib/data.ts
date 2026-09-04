@@ -28,10 +28,12 @@ export async function getSiteData(): Promise<SiteData> {
     connected: false,
   };
 
-  const supabase = publicClient();
-  if (!supabase) return empty;
-
   try {
+    // publicClient() ikut di dalam try: createClient bisa melempar kalau nilai
+    // env-nya tidak valid, dan itu tidak boleh menjatuhkan build.
+    const supabase = publicClient();
+    if (!supabase) return empty;
+
     const [profile, skills, experiences, educations, projects] = await Promise.all([
       supabase.from('profile').select('*').eq('id', 1).maybeSingle(),
       supabase.from('skills').select('*').order('sort_order', { ascending: true }),
