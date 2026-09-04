@@ -1,0 +1,363 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #020617;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+@layer components {
+  /* --- Latar gradient halus di seluruh halaman --------------------------- */
+  .gradient-bg {
+    background:
+      radial-gradient(ellipse 80% 50% at 10% 10%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 90%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 50% at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+  }
+
+  /* --- Kartu kaca ------------------------------------------------------- */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .glass-card:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.08);
+    transform: translateY(-4px);
+  }
+  .glass-card.no-lift:hover {
+    transform: none;
+  }
+
+  /* --- Teks gradient beranimasi ---------------------------------------- */
+  .text-gradient {
+    background: linear-gradient(135deg, #818cf8 0%, #06b6d4 50%, #818cf8 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: shimmer 4s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%,
+    100% {
+      background-position: 0% center;
+    }
+    50% {
+      background-position: 200% center;
+    }
+  }
+
+  /* --- Orb mengapung di hero ------------------------------------------- */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: orbFloat 20s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes orbFloat {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    25% {
+      transform: translate(30px, -40px) scale(1.05);
+    }
+    50% {
+      transform: translate(-20px, 20px) scale(0.95);
+    }
+    75% {
+      transform: translate(15px, 30px) scale(1.02);
+    }
+  }
+
+  /* --- Animasi muncul saat di-scroll ----------------------------------- */
+  .reveal {
+    opacity: 0;
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+  .reveal-up {
+    transform: translateY(40px);
+  }
+  .reveal-left {
+    transform: translateX(-40px);
+  }
+  .reveal-right {
+    transform: translateX(40px);
+  }
+  .reveal-scale {
+    transform: scale(0.92);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* --- Garis bawah nav -------------------------------------------------- */
+  .nav-link {
+    position: relative;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #6366f1, #06b6d4);
+    transition: width 0.3s ease;
+  }
+  .nav-link:hover::after,
+  .nav-link[data-active='true']::after {
+    width: 100%;
+  }
+
+  /* --- Timeline --------------------------------------------------------- */
+  .timeline-line {
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, #6366f1 0%, #06b6d4 50%, rgba(6, 182, 212, 0.1) 100%);
+  }
+  .timeline-dot {
+    position: absolute;
+    left: 13px;
+    top: 32px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #020617;
+    border: 2px solid #6366f1;
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+  .timeline-item:hover .timeline-dot {
+    background: #6366f1;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+  }
+
+  /* --- Kursor typing ---------------------------------------------------- */
+  .typing-cursor {
+    display: inline-block;
+    width: 3px;
+    height: 1em;
+    background: #818cf8;
+    margin-left: 4px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* --- Pembatas antar section ------------------------------------------ */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), transparent);
+    max-width: 80%;
+    margin: 0 auto;
+  }
+
+  /* --- Sidebar sosial / email ------------------------------------------ */
+  .side-rail {
+    position: fixed;
+    bottom: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .side-rail::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 80px;
+  }
+  .side-rail-left {
+    left: 1.5rem;
+  }
+  .side-rail-left::after {
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.5), transparent);
+  }
+  .side-rail-right {
+    right: 1.5rem;
+  }
+  .side-rail-right::after {
+    background: linear-gradient(180deg, rgba(6, 182, 212, 0.5), transparent);
+  }
+  .side-rail a {
+    color: #64748b;
+    transition: all 0.3s ease;
+  }
+  .side-rail-left a:hover {
+    color: #818cf8;
+    transform: translateY(-3px);
+  }
+  .side-rail-right a {
+    writing-mode: vertical-rl;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+  }
+  .side-rail-right a:hover {
+    color: #06b6d4;
+    transform: translateY(-3px);
+  }
+  @media (max-width: 1024px) {
+    .side-rail {
+      display: none;
+    }
+  }
+
+  /* --- Filter tab project ---------------------------------------------- */
+  .filter-tab {
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .filter-tab[data-active='true'] {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: rgba(99, 102, 241, 0.5);
+    color: #818cf8;
+  }
+
+  /* --- Input ------------------------------------------------------------ */
+  .field {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .field::placeholder {
+    color: #64748b;
+  }
+  .field:focus {
+    outline: none;
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+  }
+  .field-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+  }
+
+  /* --- Tombol ----------------------------------------------------------- */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.75rem;
+    background: #4f46e5;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff;
+    transition: all 0.3s ease;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: #6366f1;
+    box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.6);
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    transition: all 0.3s ease;
+  }
+  .btn-ghost:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+  }
+  .btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(244, 63, 94, 0.25);
+    background: rgba(244, 63, 94, 0.1);
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #fda4af;
+    transition: all 0.3s ease;
+  }
+  .btn-danger:hover:not(:disabled) {
+    background: rgba(244, 63, 94, 0.2);
+    color: #fff;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
